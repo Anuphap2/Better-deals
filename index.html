@@ -26,7 +26,7 @@
             -moz-appearance: textfield;
         }
 
-        /* ตกแต่ง Tab ให้เหมือนแอปมือถือ (Segmented Control) */
+        /* ตกแต่ง Tab ให้เหมือนแอปมือถือ */
         .tab-container {
             background-color: #f1f5f9;
             padding: 4px;
@@ -54,8 +54,8 @@
             <p class="text-sm text-slate-500 mt-1">เปรียบเทียบราคา & เช็กยอดจ่ายจริง</p>
         </div>
 
-        <!-- ตัวเลือกโหมด (Tabs) แบบ iOS Style -->
-        <div class="tab-container flex space-x-1 mb-8">
+        <!-- ตัวเลือกโหมด (Tabs) -->
+        <div class="tab-container flex space-x-1 mb-6">
             <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn tab-active flex-1 py-2.5 text-sm rounded-xl flex items-center justify-center">
                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h18M3 18h18"></path></svg>
                 เทียบ 2 ชิ้น
@@ -81,14 +81,24 @@
                         สินค้าชิ้นที่ 1
                     </h2>
                     
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
                         <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา (฿)</label>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา/ชิ้น (฿)</label>
                             <input type="number" id="price-1" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
                         </div>
                         <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ (g, ml)</label>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ/ชิ้น</label>
                             <input type="number" id="qty-1" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
+                        </div>
+                    </div>
+                    <!-- ปุ่มเพิ่มลดจำนวนชิ้น -->
+                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-2 px-4">
+                        <span class="text-sm font-semibold text-slate-500">จำนวนที่ซื้อ (ชิ้น)</span>
+                        <div class="flex items-center space-x-4">
+                            <button onclick="updatePcs('pcs-1', -1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold active:bg-slate-100 flex items-center justify-center">-</button>
+                            <span id="pcs-1-display" class="w-4 text-center font-bold text-lg text-slate-800">1</span>
+                            <input type="hidden" id="pcs-1" value="1" />
+                            <button onclick="updatePcs('pcs-1', 1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold active:bg-slate-100 flex items-center justify-center">+</button>
                         </div>
                     </div>
                 </div>
@@ -102,14 +112,24 @@
                         สินค้าชิ้นที่ 2
                     </h2>
                     
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
                         <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา (฿)</label>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา/ชิ้น (฿)</label>
                             <input type="number" id="price-2" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
                         </div>
                         <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ (g, ml)</label>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ/ชิ้น</label>
                             <input type="number" id="qty-2" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
+                        </div>
+                    </div>
+                    <!-- ปุ่มเพิ่มลดจำนวนชิ้น -->
+                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-2 px-4">
+                        <span class="text-sm font-semibold text-slate-500">จำนวนที่ซื้อ (ชิ้น)</span>
+                        <div class="flex items-center space-x-4">
+                            <button onclick="updatePcs('pcs-2', -1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold active:bg-slate-100 flex items-center justify-center">-</button>
+                            <span id="pcs-2-display" class="w-4 text-center font-bold text-lg text-slate-800">1</span>
+                            <input type="hidden" id="pcs-2" value="1" />
+                            <button onclick="updatePcs('pcs-2', 1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold active:bg-slate-100 flex items-center justify-center">+</button>
                         </div>
                     </div>
                 </div>
@@ -127,21 +147,21 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold">ชิ้นที่ <span id="winner-num"></span> คุ้มค่าที่สุด!</h3>
-                            <p class="text-emerald-100 text-sm">ประหยัดเงินได้มากกว่า <strong id="diff-percent" class="text-white"></strong></p>
+                            <p class="text-emerald-100 text-sm">ประหยัดต่อปริมาณ <strong id="diff-percent" class="text-white"></strong></p>
                         </div>
                     </div>
 
-                    <!-- สรุปยอดจ่าย (แสดงเลยไม่ต้องกด) -->
+                    <!-- สรุปยอดจ่ายรวมจำนวนชิ้น -->
                     <div class="bg-emerald-800/40 rounded-2xl p-4">
-                        <div class="text-xs text-emerald-200 font-medium mb-1">ราคาเต็ม <span id="comp-full-price"></span></div>
+                        <div class="text-xs text-emerald-200 font-medium mb-1">
+                            ราคารวม <span id="win-pcs"></span> ชิ้น = <span id="comp-full-price"></span>
+                        </div>
                         <div class="flex justify-between items-end mb-2">
-                            <!-- อัปเดต % เป็นจ่ายเอง 40% -->
-                            <div class="text-sm font-semibold">เราสแกนจ่าย <span class="bg-white/20 text-[10px] px-1.5 py-0.5 rounded ml-1">40%</span></div>
+                            <div class="text-sm font-semibold">เราจ่ายเอง <span class="bg-white/20 text-[10px] px-1.5 py-0.5 rounded ml-1">40%</span></div>
                             <div id="comp-copay-user" class="text-2xl font-black text-white"></div>
                         </div>
                         <div class="flex justify-between items-center text-sm text-emerald-100/80 border-t border-emerald-500/30 pt-2">
-                            <!-- อัปเดต % เป็นรัฐช่วย 60% -->
-                            <span>โครงการช่วย <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
+                            <span>รัฐช่วยออก <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
                             <span id="comp-copay-gov" class="font-semibold"></span>
                         </div>
                     </div>
@@ -173,27 +193,39 @@
                     <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-3">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h2 class="text-lg font-bold text-slate-800">ราคาสินค้าป้าย (บาท)</h2>
+                    <h2 class="text-lg font-bold text-slate-800">ราคาสินค้าป้าย (บาท/ชิ้น)</h2>
                 </div>
 
-                <div class="mb-6 relative">
+                <div class="mb-4 relative">
                     <input type="number" id="single-price" inputmode="decimal" placeholder="0.00" class="w-full px-5 py-4 text-4xl font-extrabold text-center text-blue-600 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all" />
+                </div>
+
+                <!-- ปุ่มเพิ่มลดจำนวนชิ้นสำหรับโหมดเดี่ยว -->
+                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-3 px-5 mb-6">
+                    <span class="text-sm font-bold text-slate-600">จำนวนที่ซื้อ (ชิ้น)</span>
+                    <div class="flex items-center space-x-5">
+                        <button onclick="updatePcs('single-pcs', -1, 'single')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold text-xl active:bg-slate-100 flex items-center justify-center">-</button>
+                        <span id="single-pcs-display" class="w-6 text-center font-bold text-xl text-slate-800">1</span>
+                        <input type="hidden" id="single-pcs" value="1" />
+                        <button onclick="updatePcs('single-pcs', 1, 'single')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold text-xl active:bg-slate-100 flex items-center justify-center">+</button>
+                    </div>
                 </div>
 
                 <!-- ผลลัพธ์ เรา 40% รัฐ 60% -->
                 <div id="single-result-area" class="d-none animate-show">
                     <div class="bg-blue-600 text-white rounded-2xl p-5 shadow-md">
-                        <div class="flex justify-between items-end border-b border-blue-500 pb-3 mb-3">
+                        <div class="text-xs text-blue-200 font-medium mb-3 text-center border-b border-blue-500 pb-2">
+                            ราคารวม <span id="single-win-pcs">1</span> ชิ้น = <span id="single-full-price"></span>
+                        </div>
+                        <div class="flex justify-between items-end mb-2">
                             <div>
                                 <span class="block text-xs text-blue-200 mb-1">เราจ่ายเอง</span>
-                                <!-- อัปเดต % เป็นจ่ายเอง 40% -->
                                 <span class="bg-blue-500/50 text-[10px] font-bold px-2 py-0.5 rounded-full">40%</span>
                             </div>
                             <strong id="single-copay-user" class="text-3xl font-black"></strong>
                         </div>
-                        <div class="flex justify-between items-center text-sm text-blue-100">
-                            <!-- อัปเดต % เป็นรัฐช่วย 60% -->
-                            <span>รัฐช่วยออกให้ <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
+                        <div class="flex justify-between items-center text-sm text-blue-100 border-t border-blue-500/50 pt-2 mt-2">
+                            <span>รัฐช่วยออก <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
                             <span id="single-copay-gov" class="font-bold"></span>
                         </div>
                     </div>
@@ -212,6 +244,29 @@
         // ฟังก์ชันจัดรูปแบบตัวเลข
         const formatMoney = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         const formatPercent = (num) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 1 }).format(num) + '%';
+
+        // ==========================================
+        // ฟังก์ชันอัปเดตจำนวนชิ้น (Stepper)
+        // ==========================================
+        const updatePcs = (inputId, delta, mode) => {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(`${inputId}-display`);
+            let currentVal = parseInt(input.value) || 1;
+            
+            // ป้องกันไม่ให้ค่าน้อยกว่า 1
+            let newVal = currentVal + delta;
+            if (newVal < 1) newVal = 1;
+            
+            input.value = newVal;
+            display.innerText = newVal;
+
+            // สั่งคำนวณใหม่ทันที
+            if (mode === 'compare') {
+                calculateCompare();
+            } else {
+                calculateSingleItem();
+            }
+        };
 
         // ==========================================
         // ระบบจัดการ Tabs (สลับโหมด)
@@ -248,12 +303,15 @@
         
         const calculateSingleItem = () => {
             const price = parseFloat(singlePriceInput.value);
+            const pcs = parseInt(document.getElementById('single-pcs').value) || 1;
             const resultArea = document.getElementById('single-result-area');
 
             if (price > 0) {
-                // อัปเดตสมการ: เราจ่าย 40% และรัฐจ่าย 60%
-                document.getElementById('single-copay-user').innerText = formatMoney(price * 0.4); 
-                document.getElementById('single-copay-gov').innerText = formatMoney(price * 0.6);  
+                const totalPrice = price * pcs; // เอาราคาคูณจำนวนชิ้น
+                document.getElementById('single-win-pcs').innerText = pcs;
+                document.getElementById('single-full-price').innerText = formatMoney(totalPrice);
+                document.getElementById('single-copay-user').innerText = formatMoney(totalPrice * 0.4); 
+                document.getElementById('single-copay-gov').innerText = formatMoney(totalPrice * 0.6);  
                 resultArea.classList.remove('d-none');
             } else {
                 resultArea.classList.add('d-none');
@@ -264,6 +322,8 @@
 
         const clearSingleInput = () => {
             singlePriceInput.value = '';
+            document.getElementById('single-pcs').value = 1;
+            document.getElementById('single-pcs-display').innerText = 1;
             calculateSingleItem();
             singlePriceInput.focus();
         };
@@ -276,8 +336,11 @@
         const calculateCompare = () => {
             const p1 = parseFloat(document.getElementById('price-1').value);
             const q1 = parseFloat(document.getElementById('qty-1').value);
+            const n1 = parseInt(document.getElementById('pcs-1').value) || 1;
+            
             const p2 = parseFloat(document.getElementById('price-2').value);
             const q2 = parseFloat(document.getElementById('qty-2').value);
+            const n2 = parseInt(document.getElementById('pcs-2').value) || 1;
 
             const isReady = p1 > 0 && q1 > 0 && p2 > 0 && q2 > 0;
             resetCompareStyles();
@@ -287,16 +350,21 @@
                 return;
             }
 
+            // คำนวณความคุ้มค่า (ราคาต่อปริมาตร) ไม่เอาจำนวนชิ้นมาคิดความคุ้ม เพราะของแพงขึ้นตามชิ้นอยู่แล้ว
             const u1 = p1 / q1;
             const u2 = p2 / q2;
 
-            let winner = 0, diffPercent = 0, winPrice = 0;
+            let winner = 0, diffPercent = 0, totalWinPrice = 0, winPcs = 1;
 
             if (u1 < u2) {
-                winner = 1; winPrice = p1;
+                winner = 1; 
+                winPcs = n1;
+                totalWinPrice = p1 * n1; // ราคารวม = ราคาต่อชิ้น * จำนวนชิ้น
                 diffPercent = ((u2 - u1) / u2) * 100;
             } else if (u2 < u1) {
-                winner = 2; winPrice = p2;
+                winner = 2; 
+                winPcs = n2;
+                totalWinPrice = p2 * n2;
                 diffPercent = ((u1 - u2) / u1) * 100;
             }
 
@@ -309,10 +377,11 @@
                 document.getElementById('winner-num').innerText = winner;
                 document.getElementById('diff-percent').innerText = formatPercent(diffPercent);
 
-                // อัปเดตสมการ 40/60 แสดงผลทันที
-                document.getElementById('comp-full-price').innerText = formatMoney(winPrice);
-                document.getElementById('comp-copay-user').innerText = formatMoney(winPrice * 0.4); // เราจ่าย 40%
-                document.getElementById('comp-copay-gov').innerText = formatMoney(winPrice * 0.6);  // รัฐช่วย 60%
+                // อัปเดตข้อมูลกล่อง 40/60
+                document.getElementById('win-pcs').innerText = winPcs;
+                document.getElementById('comp-full-price').innerText = formatMoney(totalWinPrice);
+                document.getElementById('comp-copay-user').innerText = formatMoney(totalWinPrice * 0.4);
+                document.getElementById('comp-copay-gov').innerText = formatMoney(totalWinPrice * 0.6);
 
                 // ไฮไลต์การ์ดที่ชนะ
                 const winCard = document.getElementById(`card-${winner}`);
@@ -339,6 +408,10 @@
 
         const clearCompareInputs = () => {
             compInputs.forEach(input => input.value = '');
+            document.getElementById('pcs-1').value = 1;
+            document.getElementById('pcs-1-display').innerText = 1;
+            document.getElementById('pcs-2').value = 1;
+            document.getElementById('pcs-2-display').innerText = 1;
             calculateCompare();
             document.getElementById('price-1').focus();
         };
