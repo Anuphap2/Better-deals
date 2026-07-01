@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เปรียบเทียบความคุ้มค่า</title>
+    <title>เปรียบเทียบความคุ้มค่า & ไทยช่วยไทย</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom CSS สำหรับ Animation */
@@ -14,7 +14,7 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.4s ease-out forwards;
         }
-        /* ซ่อน Element พื้นฐานถ้าไม่ใช้ Tailwind hidden */
+        /* ซ่อน Element พื้นฐาน */
         .d-none { display: none !important; }
     </style>
 </head>
@@ -24,11 +24,7 @@
         <div class="flex items-center justify-center space-x-3 mb-6">
             <div class="p-3 bg-blue-500 text-white rounded-full shadow-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-                    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-                    <path d="M7 21h10"/>
-                    <path d="M12 3v18"/>
-                    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
                 </svg>
             </div>
             <h1 class="text-2xl font-bold text-gray-900">เปรียบเทียบความคุ้มค่า</h1>
@@ -91,20 +87,48 @@
                         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
                     </svg>
                 </div>
-                <div class="relative z-10 flex items-start space-x-4">
-                    <div class="bg-white p-2 rounded-full text-green-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                            <polyline points="22 4 12 14.01 9 11.01"/>
-                        </svg>
+                <div class="relative z-10">
+                    <div class="flex items-start space-x-4 mb-4">
+                        <div class="bg-white p-2 rounded-full text-green-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-1">สินค้าที่ <span id="winner-num"></span> คุ้มค่ากว่า!</h3>
+                            <p class="text-green-100 mb-2">
+                                ประหยัดกว่า <strong id="diff-percent"></strong>
+                            </p>
+                            <div class="bg-green-700/50 rounded-lg p-2 text-sm inline-block">
+                                ถูกกว่า <span id="diff-amount"></span> / หน่วย
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold mb-1">สินค้าที่ <span id="winner-num"></span> คุ้มค่ากว่า!</h3>
-                        <p class="text-green-100 mb-3">
-                            ประหยัดเงินได้มากกว่า <strong id="diff-percent"></strong>
-                        </p>
-                        <div class="bg-green-700/50 rounded-lg p-3 text-sm inline-block">
-                            ถูกกว่า <span id="diff-amount"></span> ต่อ 1 หน่วย
+                    
+                    <div class="border-t border-green-500/50 pt-4 mt-2">
+                        <button onclick="toggleCopay()" class="w-full py-2.5 bg-green-700 hover:bg-green-800 text-white text-sm font-bold rounded-xl transition-colors flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
+                                <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
+                                <path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"/>
+                            </svg>
+                            คำนวณสิทธิ์ไทยช่วยไทย (60/40)
+                        </button>
+                        
+                        <div id="copay-details" class="d-none mt-3 bg-white/20 rounded-xl p-4 text-sm animate-fade-in-up">
+                            <div class="flex justify-between items-center mb-2 pb-2 border-b border-white/20">
+                                <span>ราคาสินค้าเต็ม:</span>
+                                <span id="full-price" class="font-bold text-white"></span>
+                            </div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span>เราจ่ายจริง <span class="bg-white/30 text-xs px-1.5 py-0.5 rounded text-white font-bold ml-1">60%</span></span>
+                                <strong id="copay-user" class="text-xl text-white"></strong>
+                            </div>
+                            <div class="flex justify-between items-center text-green-100">
+                                <span>โครงการช่วย <span class="bg-black/20 text-xs px-1.5 py-0.5 rounded ml-1">40%</span></span>
+                                <span id="copay-gov"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -118,7 +142,7 @@
                 </svg>
                 <div>
                     <h3 class="text-lg font-bold text-yellow-800">ราคาเท่ากัน</h3>
-                    <p class="text-sm text-yellow-700">สินค้าทั้งสองชิ้นมีความคุ้มค่าเท่ากัน (ราคาต่อหน่วยเท่ากัน)</p>
+                    <p class="text-sm text-yellow-700">สินค้าทั้งสองชิ้นมีความคุ้มค่าเท่ากัน</p>
                 </div>
             </div>
         </div>
@@ -132,14 +156,23 @@
     </div>
 
     <script>
-        // ฟังก์ชันจัดรูปแบบตัวเลข (เหมือนต้นฉบับ)
+        // ฟังก์ชันจัดรูปแบบตัวเลข
         const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(num);
+        const formatMoney = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
         const formatPercent = (num) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 1 }).format(num) + '%';
 
-        // ดึง Elements มาเก็บไว้เพื่อใช้งาน
         const inputs = ['price-1', 'qty-1', 'price-2', 'qty-2'].map(id => document.getElementById(id));
         
-        // ฟังก์ชันหลักสำหรับคำนวณและอัปเดตหน้าจอ
+        // ฟังก์ชันเปิด/ปิดกล่องคำนวณ 60/40
+        const toggleCopay = () => {
+            const details = document.getElementById('copay-details');
+            if (details.classList.contains('d-none')) {
+                details.classList.remove('d-none');
+            } else {
+                details.classList.add('d-none');
+            }
+        };
+
         const calculateAndRender = () => {
             const p1 = parseFloat(document.getElementById('price-1').value);
             const q1 = parseFloat(document.getElementById('qty-1').value);
@@ -147,8 +180,6 @@
             const q2 = parseFloat(document.getElementById('qty-2').value);
 
             const isReady = p1 > 0 && q1 > 0 && p2 > 0 && q2 > 0;
-
-            // รีเซ็ตคลาส CSS ทุกครั้งก่อนคำนวณ
             resetStyles();
 
             if (!isReady) {
@@ -156,43 +187,45 @@
                 return;
             }
 
-            // คำนวณราคาต่อหน่วย
             const u1 = p1 / q1;
             const u2 = p2 / q2;
 
-            // แสดงราคาต่อหน่วยใน DOM
             document.getElementById('unit-info-1').classList.remove('d-none');
             document.getElementById('unit-info-2').classList.remove('d-none');
             document.getElementById('unit-price-1').innerText = formatCurrency(u1);
             document.getElementById('unit-price-2').innerText = formatCurrency(u2);
 
-            let winner = 0, diffPercent = 0, diffAmount = 0;
+            let winner = 0, diffPercent = 0, diffAmount = 0, winPrice = 0;
 
             if (u1 < u2) {
                 winner = 1;
+                winPrice = p1; // เก็บราคาเต็มของชิ้นที่ชนะ
                 diffAmount = u2 - u1;
                 diffPercent = (diffAmount / u2) * 100;
             } else if (u2 < u1) {
                 winner = 2;
+                winPrice = p2;
                 diffAmount = u1 - u2;
                 diffPercent = (diffAmount / u1) * 100;
             } else {
-                winner = 3; // เสมอ
+                winner = 3;
             }
 
-            // อัปเดตการแสดงผลตามผลลัพธ์
             document.getElementById('result-area').classList.remove('d-none');
 
             if (winner === 1 || winner === 2) {
                 document.getElementById('winner-box').classList.remove('d-none');
                 document.getElementById('tie-box').classList.add('d-none');
                 
-                // ใส่ข้อมูลผู้ชนะ
                 document.getElementById('winner-num').innerText = winner;
                 document.getElementById('diff-percent').innerText = formatPercent(diffPercent);
                 document.getElementById('diff-amount').innerText = formatCurrency(diffAmount);
 
-                // ไฮไลต์การ์ดและราคา
+                // คำนวณส่วนของไทยช่วยไทย (60/40) โดยใช้ราคาเต็มของสินค้าชิ้นที่ชนะ
+                document.getElementById('full-price').innerText = formatMoney(winPrice);
+                document.getElementById('copay-user').innerText = formatMoney(winPrice * 0.6); // เราจ่าย 60%
+                document.getElementById('copay-gov').innerText = formatMoney(winPrice * 0.4);  // โครงการช่วย 40%
+
                 const winCard = document.getElementById(`card-${winner}`);
                 winCard.classList.remove('bg-white', 'border-transparent');
                 winCard.classList.add('bg-green-50', 'border-green-400');
@@ -201,13 +234,11 @@
                 document.getElementById(`unit-price-${winner}`).classList.add('text-green-600', 'font-bold');
 
             } else {
-                // กรณีเสมอ
                 document.getElementById('winner-box').classList.add('d-none');
                 document.getElementById('tie-box').classList.remove('d-none');
             }
         };
 
-        // ฟังก์ชันล้างค่ากลับเป็นค่าเริ่มต้น
         const resetStyles = () => {
             [1, 2].forEach(num => {
                 const card = document.getElementById(`card-${num}`);
@@ -221,12 +252,12 @@
                 unitPriceSpan.classList.remove('text-green-600', 'font-bold');
                 unitPriceSpan.innerText = '';
             });
+            // ซ่อนกล่องไทยช่วยไทยทุกครั้งที่มีการพิมพ์ใหม่
+            document.getElementById('copay-details').classList.add('d-none');
         };
 
-        // ผูก Event Listener ให้ทุกๆ Input เพื่อให้คำนวณแบบ Real-time เหมือน React State
         inputs.forEach(input => input.addEventListener('input', calculateAndRender));
 
-        // ฟังก์ชันปุ่มล้างข้อมูล
         const handleClear = () => {
             inputs.forEach(input => input.value = '');
             calculateAndRender();
