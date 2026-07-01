@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เปรียบเทียบความคุ้มค่า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom CSS สำหรับ Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        /* ซ่อน Element พื้นฐานถ้าไม่ใช้ Tailwind hidden */
+        .d-none { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-100 py-6 px-4 font-sans text-gray-800">
+
+    <div class="max-w-md mx-auto">
+        <div class="flex items-center justify-center space-x-3 mb-6">
+            <div class="p-3 bg-blue-500 text-white rounded-full shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="M7 21h10"/>
+                    <path d="M12 3v18"/>
+                    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">เปรียบเทียบความคุ้มค่า</h1>
+        </div>
+
+        <div class="space-y-4">
+            <div id="card-1" class="p-5 rounded-2xl shadow-sm border-2 transition-colors bg-white border-transparent">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-700 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center mr-2 text-sm">1</span>
+                        สินค้าชิ้นที่ 1
+                    </h2>
+                    <span id="badge-1" class="d-none text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full animate-pulse">คุ้มกว่า!</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">ราคา (บาท)</label>
+                        <input type="number" id="price-1" inputmode="decimal" min="0" step="any" placeholder="0.00" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">ปริมาณ (หน่วย)</label>
+                        <input type="number" id="qty-1" inputmode="decimal" min="0" step="any" placeholder="เช่น 100" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    </div>
+                </div>
+                <div id="unit-info-1" class="d-none mt-3 text-sm text-gray-500 text-right font-medium">
+                    ตกหน่วยละ <span id="unit-price-1"></span>
+                </div>
+            </div>
+
+            <div id="card-2" class="p-5 rounded-2xl shadow-sm border-2 transition-colors bg-white border-transparent">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-gray-700 flex items-center">
+                        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center mr-2 text-sm">2</span>
+                        สินค้าชิ้นที่ 2
+                    </h2>
+                    <span id="badge-2" class="d-none text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full animate-pulse">คุ้มกว่า!</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">ราคา (บาท)</label>
+                        <input type="number" id="price-2" inputmode="decimal" min="0" step="any" placeholder="0.00" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">ปริมาณ (หน่วย)</label>
+                        <input type="number" id="qty-2" inputmode="decimal" min="0" step="any" placeholder="เช่น 100" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all" />
+                    </div>
+                </div>
+                <div id="unit-info-2" class="d-none mt-3 text-sm text-gray-500 text-right font-medium">
+                    ตกหน่วยละ <span id="unit-price-2"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-area" class="d-none mt-6 animate-fade-in-up">
+            <div id="winner-box" class="bg-green-600 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <div class="absolute -right-4 -top-4 opacity-10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                </div>
+                <div class="relative z-10 flex items-start space-x-4">
+                    <div class="bg-white p-2 rounded-full text-green-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-1">สินค้าที่ <span id="winner-num"></span> คุ้มค่ากว่า!</h3>
+                        <p class="text-green-100 mb-3">
+                            ประหยัดเงินได้มากกว่า <strong id="diff-percent"></strong>
+                        </p>
+                        <div class="bg-green-700/50 rounded-lg p-3 text-sm inline-block">
+                            ถูกกว่า <span id="diff-amount"></span> ต่อ 1 หน่วย
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tie-box" class="bg-yellow-50 border border-yellow-200 p-6 rounded-2xl shadow-sm flex items-center space-x-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div>
+                    <h3 class="text-lg font-bold text-yellow-800">ราคาเท่ากัน</h3>
+                    <p class="text-sm text-yellow-700">สินค้าทั้งสองชิ้นมีความคุ้มค่าเท่ากัน (ราคาต่อหน่วยเท่ากัน)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <button onclick="handleClear()" class="text-gray-400 hover:text-gray-600 font-medium text-sm px-4 py-2 transition-colors">
+                ล้างข้อมูลเพื่อคำนวณใหม่
+            </button>
+        </div>
+        
+    </div>
+
+    <script>
+        // ฟังก์ชันจัดรูปแบบตัวเลข (เหมือนต้นฉบับ)
+        const formatCurrency = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 4 }).format(num);
+        const formatPercent = (num) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 1 }).format(num) + '%';
+
+        // ดึง Elements มาเก็บไว้เพื่อใช้งาน
+        const inputs = ['price-1', 'qty-1', 'price-2', 'qty-2'].map(id => document.getElementById(id));
+        
+        // ฟังก์ชันหลักสำหรับคำนวณและอัปเดตหน้าจอ
+        const calculateAndRender = () => {
+            const p1 = parseFloat(document.getElementById('price-1').value);
+            const q1 = parseFloat(document.getElementById('qty-1').value);
+            const p2 = parseFloat(document.getElementById('price-2').value);
+            const q2 = parseFloat(document.getElementById('qty-2').value);
+
+            const isReady = p1 > 0 && q1 > 0 && p2 > 0 && q2 > 0;
+
+            // รีเซ็ตคลาส CSS ทุกครั้งก่อนคำนวณ
+            resetStyles();
+
+            if (!isReady) {
+                document.getElementById('result-area').classList.add('d-none');
+                return;
+            }
+
+            // คำนวณราคาต่อหน่วย
+            const u1 = p1 / q1;
+            const u2 = p2 / q2;
+
+            // แสดงราคาต่อหน่วยใน DOM
+            document.getElementById('unit-info-1').classList.remove('d-none');
+            document.getElementById('unit-info-2').classList.remove('d-none');
+            document.getElementById('unit-price-1').innerText = formatCurrency(u1);
+            document.getElementById('unit-price-2').innerText = formatCurrency(u2);
+
+            let winner = 0, diffPercent = 0, diffAmount = 0;
+
+            if (u1 < u2) {
+                winner = 1;
+                diffAmount = u2 - u1;
+                diffPercent = (diffAmount / u2) * 100;
+            } else if (u2 < u1) {
+                winner = 2;
+                diffAmount = u1 - u2;
+                diffPercent = (diffAmount / u1) * 100;
+            } else {
+                winner = 3; // เสมอ
+            }
+
+            // อัปเดตการแสดงผลตามผลลัพธ์
+            document.getElementById('result-area').classList.remove('d-none');
+
+            if (winner === 1 || winner === 2) {
+                document.getElementById('winner-box').classList.remove('d-none');
+                document.getElementById('tie-box').classList.add('d-none');
+                
+                // ใส่ข้อมูลผู้ชนะ
+                document.getElementById('winner-num').innerText = winner;
+                document.getElementById('diff-percent').innerText = formatPercent(diffPercent);
+                document.getElementById('diff-amount').innerText = formatCurrency(diffAmount);
+
+                // ไฮไลต์การ์ดและราคา
+                const winCard = document.getElementById(`card-${winner}`);
+                winCard.classList.remove('bg-white', 'border-transparent');
+                winCard.classList.add('bg-green-50', 'border-green-400');
+                
+                document.getElementById(`badge-${winner}`).classList.remove('d-none');
+                document.getElementById(`unit-price-${winner}`).classList.add('text-green-600', 'font-bold');
+
+            } else {
+                // กรณีเสมอ
+                document.getElementById('winner-box').classList.add('d-none');
+                document.getElementById('tie-box').classList.remove('d-none');
+            }
+        };
+
+        // ฟังก์ชันล้างค่ากลับเป็นค่าเริ่มต้น
+        const resetStyles = () => {
+            [1, 2].forEach(num => {
+                const card = document.getElementById(`card-${num}`);
+                card.classList.remove('bg-green-50', 'border-green-400');
+                card.classList.add('bg-white', 'border-transparent');
+                
+                document.getElementById(`badge-${num}`).classList.add('d-none');
+                document.getElementById(`unit-info-${num}`).classList.add('d-none');
+                
+                const unitPriceSpan = document.getElementById(`unit-price-${num}`);
+                unitPriceSpan.classList.remove('text-green-600', 'font-bold');
+                unitPriceSpan.innerText = '';
+            });
+        };
+
+        // ผูก Event Listener ให้ทุกๆ Input เพื่อให้คำนวณแบบ Real-time เหมือน React State
+        inputs.forEach(input => input.addEventListener('input', calculateAndRender));
+
+        // ฟังก์ชันปุ่มล้างข้อมูล
+        const handleClear = () => {
+            inputs.forEach(input => input.value = '');
+            calculateAndRender();
+        };
+    </script>
+</body>
+</html>
