@@ -1,420 +1,733 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>เปรียบเทียบ & ไทยช่วยไทย</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes" />
+    <title>คุ้มกว่าไหม? · เปรียบเทียบ & ไทยช่วยไทย</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <style>
-        /* Animation การแสดงผล */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            transition: background-color 0.3s, color 0.3s;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ===== Animation ===== */
         @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(14px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
         .animate-show {
             animation: slideUpFade 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .d-none { display: none !important; }
+        .d-none {
+            display: none !important;
+        }
 
-        /* ซ่อนลูกศรใน input type="number" ให้ดูคลีนขึ้น */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
+        /* ===== Input number layout ===== */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         input[type=number] {
             -moz-appearance: textfield;
         }
 
-        /* ตกแต่ง Tab ให้เหมือนแอปมือถือ */
-        .tab-container {
-            background-color: #f1f5f9;
-            padding: 4px;
-            border-radius: 16px;
+        /* ===== Stepper button effect ===== */
+        .stepper-btn {
+            transition: all 0.15s ease;
+            touch-action: manipulation;
         }
-        .tab-btn {
-            color: #64748b;
-            transition: all 0.2s ease-in-out;
+        .stepper-btn:active {
+            transform: scale(0.9);
         }
-        .tab-active {
-            background-color: #ffffff;
-            color: #0f172a;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            font-weight: 700;
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 8px;
+        }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #475569;
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-50 font-sans text-slate-800 pb-10">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300">
 
-    <div class="max-w-md mx-auto px-4 pt-6">
-        
-        <!-- ส่วนหัว (Header) -->
-        <div class="text-center mb-6">
-            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">คุ้มกว่าไหม?</h1>
-            <p class="text-sm text-slate-500 mt-1">เปรียบเทียบราคา & เช็กยอดจ่ายจริง</p>
-        </div>
+    <div class="max-w-lg mx-auto px-4 pt-6 pb-12">
 
-        <!-- ตัวเลือกโหมด (Tabs) -->
-        <div class="tab-container flex space-x-1 mb-6">
-            <button onclick="switchTab('compare')" id="tab-compare" class="tab-btn tab-active flex-1 py-2.5 text-sm rounded-xl flex items-center justify-center">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h18M3 18h18"></path></svg>
+        <header class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                    <span class="bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 p-2 rounded-2xl border border-emerald-100 dark:border-emerald-900/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    คุ้มกว่าไหม?
+                </h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">เปรียบเทียบราคา · ไทยช่วยไทย 40/60</p>
+            </div>
+            <button onclick="toggleDarkMode()" class="p-3 rounded-2xl bg-white shadow-sm border border-slate-200 dark:border-slate-700 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all" aria-label="Toggle dark mode">
+                <svg id="dark-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+                </svg>
+            </button>
+        </header>
+
+        <div class="bg-slate-200/70 dark:bg-slate-800 p-1 rounded-2xl flex space-x-1 mb-6">
+            <button onclick="switchTab('compare')" id="tab-compare" class="flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-bold bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M3 12h18M3 18h18"/></svg>
                 เทียบ 2 ชิ้น
             </button>
-            <button onclick="switchTab('single')" id="tab-single" class="tab-btn flex-1 py-2.5 text-sm rounded-xl flex items-center justify-center font-medium">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            <button onclick="switchTab('single')" id="tab-single" class="flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                 คำนวณชิ้นเดียว
             </button>
         </div>
 
-        <!-- ============================================== -->
-        <!-- โหมดที่ 1: เปรียบเทียบสินค้า 2 ชิ้น -->
-        <!-- ============================================== -->
-        <div id="view-compare">
-            <div class="space-y-5">
-                
-                <!-- สินค้า 1 -->
-                <div id="card-1" class="bg-white p-5 rounded-3xl shadow-sm border-2 border-transparent transition-all relative">
-                    <div id="badge-1" class="d-none absolute -top-3 right-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">คุ้มกว่า!</div>
-                    
-                    <h2 class="text-base font-bold text-slate-700 flex items-center mb-3">
-                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mr-2 text-xs">1</span>
-                        สินค้าชิ้นที่ 1
-                    </h2>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา/ชิ้น (฿)</label>
-                            <input type="number" id="price-1" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
-                        </div>
-                        <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ/ชิ้น</label>
-                            <input type="number" id="qty-1" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
-                        </div>
-                    </div>
-                    <!-- ปุ่มเพิ่มลดจำนวนชิ้น -->
-                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-2 px-4">
-                        <span class="text-sm font-semibold text-slate-500">จำนวนที่ซื้อ (ชิ้น)</span>
-                        <div class="flex items-center space-x-4">
-                            <button onclick="updatePcs('pcs-1', -1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold active:bg-slate-100 flex items-center justify-center">-</button>
-                            <span id="pcs-1-display" class="w-4 text-center font-bold text-lg text-slate-800">1</span>
-                            <input type="hidden" id="pcs-1" value="1" />
-                            <button onclick="updatePcs('pcs-1', 1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold active:bg-slate-100 flex items-center justify-center">+</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- สินค้า 2 -->
-                <div id="card-2" class="bg-white p-5 rounded-3xl shadow-sm border-2 border-transparent transition-all relative">
-                    <div id="badge-2" class="d-none absolute -top-3 right-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">คุ้มกว่า!</div>
-                    
-                    <h2 class="text-base font-bold text-slate-700 flex items-center mb-3">
-                        <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center mr-2 text-xs">2</span>
-                        สินค้าชิ้นที่ 2
-                    </h2>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ราคา/ชิ้น (฿)</label>
-                            <input type="number" id="price-2" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
-                        </div>
-                        <div class="relative">
-                            <label class="block text-xs font-semibold text-slate-400 mb-1 ml-1">ปริมาณ/ชิ้น</label>
-                            <input type="number" id="qty-2" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-lg font-bold text-slate-800 transition-all" />
-                        </div>
-                    </div>
-                    <!-- ปุ่มเพิ่มลดจำนวนชิ้น -->
-                    <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-2 px-4">
-                        <span class="text-sm font-semibold text-slate-500">จำนวนที่ซื้อ (ชิ้น)</span>
-                        <div class="flex items-center space-x-4">
-                            <button onclick="updatePcs('pcs-2', -1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold active:bg-slate-100 flex items-center justify-center">-</button>
-                            <span id="pcs-2-display" class="w-4 text-center font-bold text-lg text-slate-800">1</span>
-                            <input type="hidden" id="pcs-2" value="1" />
-                            <button onclick="updatePcs('pcs-2', 1, 'compare')" class="w-8 h-8 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold active:bg-slate-100 flex items-center justify-center">+</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- กล่องแสดงผลลัพธ์ -->
-            <div id="result-area" class="d-none mt-6 animate-show">
-                
-                <!-- กล่องผู้ชนะ -->
-                <div id="winner-box" class="bg-emerald-600 rounded-3xl p-6 shadow-lg text-white">
-                    <div class="flex items-center space-x-3 mb-5 border-b border-emerald-500/50 pb-4">
-                        <div class="bg-white/20 p-2 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="20 6 9 17 4 12"/></svg>
-                        </div>
-                        <div>
-                            <h3 class="text-lg font-bold">ชิ้นที่ <span id="winner-num"></span> คุ้มค่าที่สุด!</h3>
-                            <p class="text-emerald-100 text-sm">ประหยัดต่อปริมาณ <strong id="diff-percent" class="text-white"></strong></p>
-                        </div>
-                    </div>
-
-                    <!-- สรุปยอดจ่ายรวมจำนวนชิ้น -->
-                    <div class="bg-emerald-800/40 rounded-2xl p-4">
-                        <div class="text-xs text-emerald-200 font-medium mb-1">
-                            ราคารวม <span id="win-pcs"></span> ชิ้น = <span id="comp-full-price"></span>
-                        </div>
-                        <div class="flex justify-between items-end mb-2">
-                            <div class="text-sm font-semibold">เราจ่ายเอง <span class="bg-white/20 text-[10px] px-1.5 py-0.5 rounded ml-1">40%</span></div>
-                            <div id="comp-copay-user" class="text-2xl font-black text-white"></div>
-                        </div>
-                        <div class="flex justify-between items-center text-sm text-emerald-100/80 border-t border-emerald-500/30 pt-2">
-                            <span>รัฐช่วยออก <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
-                            <span id="comp-copay-gov" class="font-semibold"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- กล่องเสมอ -->
-                <div id="tie-box" class="bg-amber-100 border-2 border-amber-200 text-amber-800 rounded-3xl p-5 flex items-center shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-3 text-amber-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    <div>
-                        <h3 class="font-bold">คุ้มค่าเท่ากัน</h3>
-                        <p class="text-sm opacity-80">ซื้อชิ้นไหนก็ได้ ราคาต่อปริมาณเท่ากันเป๊ะ</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ปุ่มล้างข้อมูล -->
-            <button onclick="clearCompareInputs()" class="w-full mt-6 py-3 text-slate-400 font-semibold text-sm rounded-xl hover:bg-slate-200/50 transition-colors">
-                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                เริ่มคำนวณใหม่
-            </button>
+        <div class="flex items-center justify-between bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-6">
+            <span class="text-sm font-semibold text-slate-600 dark:text-slate-400 flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                หน่วยนับ
+            </span>
+            <select id="unit-select" class="bg-slate-100 dark:bg-slate-700 border-0 text-sm font-bold text-slate-800 dark:text-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-emerald-400 outline-none transition-all cursor-pointer">
+                <option value="ชิ้น">ชิ้น</option>
+                <option value="กรัม">กรัม (g)</option>
+                <option value="กิโลกรัม">กิโลกรัม (kg)</option>
+                <option value="มิลลิลิตร">มิลลิลิตร (ml)</option>
+                <option value="ลิตร">ลิตร (L)</option>
+                <option value="ออนซ์">ออนซ์ (oz)</option>
+            </select>
         </div>
 
-        <!-- ============================================== -->
-        <!-- โหมดที่ 2: คำนวณชิ้นเดียว (ไทยช่วยไทย) -->
-        <!-- ============================================== -->
-        <div id="view-single" class="d-none animate-show">
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <div class="text-center mb-6">
-                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-3">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <div id="view-compare" class="space-y-4">
+
+            <div id="card-1" class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700/80 transition-all duration-300 relative">
+                <div id="badge-1" class="d-none absolute -top-3 right-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">คุ้มกว่า!</div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mr-2 text-xs font-extrabold border border-emerald-100 dark:border-emerald-900">1</span>
+                        สินค้าชิ้นที่ 1
+                    </h2>
+                    <button onclick="swapItems()" class="text-xs text-slate-400 hover:text-emerald-500 transition-colors flex items-center gap-1 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700" title="สลับข้อมูล">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 ml-1">ราคา (฿)</label>
+                        <input type="number" id="price-1" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-400 outline-none text-lg font-bold text-slate-800 dark:text-slate-100 transition-all" />
                     </div>
-                    <h2 class="text-lg font-bold text-slate-800">ราคาสินค้าป้าย (บาท/ชิ้น)</h2>
-                </div>
-
-                <div class="mb-4 relative">
-                    <input type="number" id="single-price" inputmode="decimal" placeholder="0.00" class="w-full px-5 py-4 text-4xl font-extrabold text-center text-blue-600 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100 outline-none transition-all" />
-                </div>
-
-                <!-- ปุ่มเพิ่มลดจำนวนชิ้นสำหรับโหมดเดี่ยว -->
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-2xl p-3 px-5 mb-6">
-                    <span class="text-sm font-bold text-slate-600">จำนวนที่ซื้อ (ชิ้น)</span>
-                    <div class="flex items-center space-x-5">
-                        <button onclick="updatePcs('single-pcs', -1, 'single')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200 text-slate-600 font-bold text-xl active:bg-slate-100 flex items-center justify-center">-</button>
-                        <span id="single-pcs-display" class="w-6 text-center font-bold text-xl text-slate-800">1</span>
-                        <input type="hidden" id="single-pcs" value="1" />
-                        <button onclick="updatePcs('single-pcs', 1, 'single')" class="w-10 h-10 rounded-full bg-white shadow-sm border border-slate-200 text-blue-600 font-bold text-xl active:bg-slate-100 flex items-center justify-center">+</button>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 ml-1">ปริมาณ</label>
+                        <input type="number" id="qty-1" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-400 outline-none text-lg font-bold text-slate-800 dark:text-slate-100 transition-all" />
                     </div>
                 </div>
+                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-slate-150 dark:border-slate-700 rounded-2xl p-2 px-4">
+                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">ซื้อจำนวน</span>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updatePcs('pcs-1', -1, 'compare')" class="stepper-btn w-8 h-8 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold flex items-center justify-center hover:bg-slate-50">−</button>
+                        <span id="pcs-1-display" class="w-6 text-center font-bold text-base text-slate-800 dark:text-slate-100">1</span>
+                        <input type="hidden" id="pcs-1" value="1" />
+                        <button onclick="updatePcs('pcs-1', 1, 'compare')" class="stepper-btn w-8 h-8 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center hover:bg-slate-50">+</button>
+                    </div>
+                </div>
+            </div>
 
-                <!-- ผลลัพธ์ เรา 40% รัฐ 60% -->
-                <div id="single-result-area" class="d-none animate-show">
-                    <div class="bg-blue-600 text-white rounded-2xl p-5 shadow-md">
-                        <div class="text-xs text-blue-200 font-medium mb-3 text-center border-b border-blue-500 pb-2">
-                            ราคารวม <span id="single-win-pcs">1</span> ชิ้น = <span id="single-full-price"></span>
+            <div id="card-2" class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700/80 transition-all duration-300 relative">
+                <div id="badge-2" class="d-none absolute -top-3 right-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">คุ้มกว่า!</div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-2 text-xs font-extrabold border border-blue-100 dark:border-blue-900">2</span>
+                        สินค้าชิ้นที่ 2
+                    </h2>
+                    <button onclick="swapItems()" class="text-xs text-slate-400 hover:text-emerald-500 transition-colors flex items-center gap-1 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700" title="สลับข้อมูล">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/></svg>
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 ml-1">ราคา (฿)</label>
+                        <input type="number" id="price-2" inputmode="decimal" placeholder="0" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-400 outline-none text-lg font-bold text-slate-800 dark:text-slate-100 transition-all" />
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 ml-1">ปริมาณ</label>
+                        <input type="number" id="qty-2" inputmode="decimal" placeholder="100" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-emerald-400 outline-none text-lg font-bold text-slate-800 dark:text-slate-100 transition-all" />
+                    </div>
+                </div>
+                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-slate-150 dark:border-slate-700 rounded-2xl p-2 px-4">
+                    <span class="text-xs font-semibold text-slate-500 dark:text-slate-400">ซื้อจำนวน</span>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updatePcs('pcs-2', -1, 'compare')" class="stepper-btn w-8 h-8 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold flex items-center justify-center hover:bg-slate-50">−</button>
+                        <span id="pcs-2-display" class="w-6 text-center font-bold text-base text-slate-800 dark:text-slate-100">1</span>
+                        <input type="hidden" id="pcs-2" value="1" />
+                        <button onclick="updatePcs('pcs-2', 1, 'compare')" class="stepper-btn w-8 h-8 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center hover:bg-slate-50">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="result-area" class="d-none mt-6 animate-show space-y-4">
+                <div id="winner-box" class="bg-emerald-600 dark:bg-emerald-700 rounded-3xl p-6 shadow-md text-white">
+                    <div class="flex items-center space-x-3 mb-4 border-b border-emerald-500/30 pb-4">
+                        <div class="bg-white/20 p-2 rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         </div>
-                        <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="text-base font-bold">ชิ้นที่ <span id="winner-num"></span> คุ้มค่าที่สุด!</h3>
+                            <p class="text-emerald-100 text-xs mt-0.5">ประหยัดต่อหน่วยได้ <strong id="diff-percent" class="text-white text-sm"></strong></p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs text-emerald-100 mb-1">
+                            <span>ส่วนต่างราคา</span>
+                            <span id="diff-bar-label">0%</span>
+                        </div>
+                        <div class="w-full h-2 bg-emerald-800/40 rounded-full overflow-hidden">
+                            <div id="diff-bar" class="h-full bg-white rounded-full transition-all duration-500 ease-out" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-emerald-700/50 dark:bg-emerald-800/50 border border-emerald-500/20 rounded-2xl p-4 space-y-2.5">
+                        <div class="text-xs text-emerald-100 font-medium">
+                            ราคารวม <span id="win-pcs" class="underline decoration-wavy"></span> ชิ้น = <span id="comp-full-price" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between items-end border-t border-emerald-500/20 pt-2">
+                            <div class="text-sm font-semibold flex items-center gap-1.5">
+                                เราจ่ายเอง <span class="bg-white/20 text-[10px] font-bold px-1.5 py-0.5 rounded-md">40%</span>
+                            </div>
+                            <div id="comp-copay-user" class="text-2xl font-black text-white"></div>
+                        </div>
+                        <div class="flex justify-between items-center text-xs text-emerald-100/90">
+                            <span>รัฐช่วยออก <span class="bg-black/20 text-[10px] font-bold px-1.5 py-0.5 rounded-md">60%</span></span>
+                            <span id="comp-copay-gov" class="font-bold text-sm"></span>
+                        </div>
+                    </div>
+
+                    <button onclick="copyCompareResult()" class="mt-4 w-full py-2.5 bg-white text-emerald-700 hover:bg-emerald-50 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                        คัดลอกผลลัพธ์
+                    </button>
+                </div>
+
+                <div id="tie-box" class="d-none bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 rounded-2xl p-4 flex items-center shadow-sm">
+                    <svg class="w-5 h-5 mr-3 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <div>
+                        <h3 class="font-bold text-sm">คุ้มค่าเท่ากัน</h3>
+                        <p class="text-xs opacity-90 mt-0.5">ราคาเฉลี่ยต่อหน่วยมีมูลค่าเท่ากันเป๊ะ ๆ</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button onclick="clearCompareInputs()" class="flex-1 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold text-sm rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    ล้างข้อมูล
+                </button>
+                <button onclick="saveCompareHistory()" class="flex-1 py-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-700 dark:text-emerald-400 font-semibold text-sm rounded-xl hover:bg-emerald-100/70 dark:hover:bg-emerald-900/30 transition-colors flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                    บันทึกประวัติ
+                </button>
+            </div>
+        </div>
+
+        <div id="view-single" class="d-none animate-show space-y-4">
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700">
+                <div class="text-center mb-5">
+                    <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 mb-3 border border-blue-100 dark:border-blue-900">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h2 class="text-base font-bold text-slate-800 dark:text-slate-100">ราคาสินค้าตามป้าย</h2>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">ระบุจำนวนเงินตามหน่วยเฉลี่ยต่อ <span id="single-unit-label" class="font-bold underline decoration-emerald-400 text-slate-600 dark:text-slate-300">ชิ้น</span></p>
+                </div>
+
+                <div class="mb-5">
+                    <input type="number" id="single-price" inputmode="decimal" placeholder="0.00" class="w-full px-5 py-4 text-4xl font-black text-center text-emerald-600 dark:text-emerald-400 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl focus:bg-white dark:focus:bg-slate-800 focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100 dark:focus:ring-emerald-900/20 outline-none transition-all" />
+                </div>
+
+                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 px-4 mb-5">
+                    <span class="text-xs font-bold text-slate-600 dark:text-slate-400">จำนวนแพ็คเกจที่ซื้อ</span>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="updatePcs('single-pcs', -1, 'single')" class="stepper-btn w-9 h-9 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold flex items-center justify-center hover:bg-slate-50">−</button>
+                        <span id="single-pcs-display" class="w-6 text-center font-bold text-lg text-slate-800 dark:text-slate-100">1</span>
+                        <input type="hidden" id="single-pcs" value="1" />
+                        <button onclick="updatePcs('single-pcs', 1, 'single')" class="stepper-btn w-9 h-9 rounded-full bg-white dark:bg-slate-700 shadow-sm border border-slate-200 dark:border-slate-600 text-emerald-600 dark:text-emerald-400 font-bold flex items-center justify-center hover:bg-slate-50">+</button>
+                    </div>
+                </div>
+
+                <div id="single-result-area" class="d-none animate-show">
+                    <div class="bg-blue-600 dark:bg-blue-700 text-white rounded-2xl p-5 shadow-sm space-y-3">
+                        <div class="text-xs text-blue-100 font-medium text-center border-b border-blue-500/30 pb-2.5">
+                            ราคารวมทั้งสิ้น <span id="single-win-pcs">1</span> ชิ้น = <span id="single-full-price" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between items-end pt-1">
                             <div>
-                                <span class="block text-xs text-blue-200 mb-1">เราจ่ายเอง</span>
-                                <span class="bg-blue-500/50 text-[10px] font-bold px-2 py-0.5 rounded-full">40%</span>
+                                <span class="block text-xs text-blue-100">เราจ่ายจริง</span>
+                                <span class="inline-block bg-blue-500/50 text-[10px] font-bold px-2 py-0.5 rounded-md mt-1">40%</span>
                             </div>
                             <strong id="single-copay-user" class="text-3xl font-black"></strong>
                         </div>
-                        <div class="flex justify-between items-center text-sm text-blue-100 border-t border-blue-500/50 pt-2 mt-2">
-                            <span>รัฐช่วยออก <span class="bg-black/20 text-[10px] px-1.5 py-0.5 rounded ml-1">60%</span></span>
-                            <span id="single-copay-gov" class="font-bold"></span>
+                        <div class="flex justify-between items-center text-xs text-blue-100 border-t border-blue-500/30 pt-2.5">
+                            <span>รัฐช่วยจ่ายส่วนที่เหลือ <span class="bg-black/20 text-[10px] font-bold px-1.5 py-0.5 rounded-md">60%</span></span>
+                            <span id="single-copay-gov" class="font-bold text-sm"></span>
                         </div>
+                        <button onclick="copySingleResult()" class="mt-2 w-full py-2 bg-white text-blue-700 hover:bg-blue-50 rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                            คัดลอกผลลัพธ์
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <button onclick="clearSingleInput()" class="w-full mt-6 py-3 text-slate-400 font-semibold text-sm rounded-xl hover:bg-slate-200/50 transition-colors">
-                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <button onclick="clearSingleInput()" class="w-full py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 font-semibold text-sm rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                 ล้างราคาสินค้า
             </button>
         </div>
 
+        <div class="mt-8 pt-5 border-t border-slate-200 dark:border-slate-800">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-2 uppercase tracking-wider">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    ประวัติการเปรียบเทียบ
+                </h3>
+                <button onclick="clearHistory()" class="text-xs font-bold text-slate-400 hover:text-red-500 transition-colors p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">ล้างทั้งหมด</button>
+            </div>
+            <div id="history-list" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+                <p class="text-xs text-slate-400 dark:text-slate-500 text-center py-4 bg-white dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">ยังไม่มีประวัติในระบบ</p>
+            </div>
+        </div>
+
+        <footer class="mt-10 text-center text-[11px] text-slate-400 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800 pt-6 space-y-1">
+            <p>เครื่องมือคำนวณส่วนต่างราคาต่อหน่วย · นโยบายกระตุ้นเศรษฐกิจร่วมจ่าย 40/60</p>
+            <p>💡 สามารถคลิกที่รายการประวัติการเปรียบเทียบ เพื่อดึงข้อมูลดิบกลับมาแก้ไขคำนวณซ้ำได้</p>
+        </footer>
     </div>
 
     <script>
-        // ฟังก์ชันจัดรูปแบบตัวเลข
-        const formatMoney = (num) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-        const formatPercent = (num) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 1 }).format(num) + '%';
+        // ===== HELPERS =====
+        const fmt = (n) => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+        const pct = (n) => new Intl.NumberFormat('th-TH', { maximumFractionDigits: 1 }).format(n) + '%';
 
-        // ==========================================
-        // ฟังก์ชันอัปเดตจำนวนชิ้น (Stepper)
-        // ==========================================
-        const updatePcs = (inputId, delta, mode) => {
-            const input = document.getElementById(inputId);
-            const display = document.getElementById(`${inputId}-display`);
-            let currentVal = parseInt(input.value) || 1;
-            
-            // ป้องกันไม่ให้ค่าน้อยกว่า 1
-            let newVal = currentVal + delta;
-            if (newVal < 1) newVal = 1;
-            
-            input.value = newVal;
-            display.innerText = newVal;
+        // ===== DARK MODE SYSTEM =====
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const icon = document.getElementById('dark-icon');
+            if (html.classList.contains('dark')) {
+                icon.innerHTML = `<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>`;
+            } else {
+                icon.innerHTML = `<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>`;
+            }
+            localStorage.setItem('darkMode', html.classList.contains('dark') ? 'true' : 'false');
+        }
 
-            // สั่งคำนวณใหม่ทันที
-            if (mode === 'compare') {
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+            document.getElementById('dark-icon').innerHTML = `<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>`;
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // ===== UNIT LABEL CONTROLLER =====
+        const unitSelect = document.getElementById('unit-select');
+        const singleUnitLabel = document.getElementById('single-unit-label');
+
+        function updateUnitLabels() {
+            const unit = unitSelect.value;
+            singleUnitLabel.textContent = unit;
+        }
+        
+        unitSelect.addEventListener('change', () => {
+            updateUnitLabels();
+            if (!document.getElementById('view-compare').classList.contains('d-none')) {
                 calculateCompare();
             } else {
                 calculateSingleItem();
             }
-        };
+        });
+        updateUnitLabels();
 
-        // ==========================================
-        // ระบบจัดการ Tabs (สลับโหมด)
-        // ==========================================
-        const switchTab = (tabName) => {
-            const tabCompareBtn = document.getElementById('tab-compare');
-            const tabSingleBtn = document.getElementById('tab-single');
-            const viewCompare = document.getElementById('view-compare');
-            const viewSingle = document.getElementById('view-single');
+        // ===== TAB SWITCHER =====
+        function switchTab(tab) {
+            const cBtn = document.getElementById('tab-compare');
+            const sBtn = document.getElementById('tab-single');
+            const cView = document.getElementById('view-compare');
+            const sView = document.getElementById('view-single');
 
-            if (tabName === 'compare') {
-                tabCompareBtn.classList.add('tab-active');
-                tabCompareBtn.classList.remove('font-medium');
-                tabSingleBtn.classList.remove('tab-active');
-                tabSingleBtn.classList.add('font-medium');
-                
-                viewCompare.classList.remove('d-none');
-                viewSingle.classList.add('d-none');
+            if (tab === 'compare') {
+                cBtn.className = "flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-bold bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white";
+                sBtn.className = "flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                cView.classList.remove('d-none');
+                sView.classList.add('d-none');
+                calculateCompare();
             } else {
-                tabSingleBtn.classList.add('tab-active');
-                tabSingleBtn.classList.remove('font-medium');
-                tabCompareBtn.classList.remove('tab-active');
-                tabCompareBtn.classList.add('font-medium');
-                
-                viewSingle.classList.remove('d-none');
-                viewCompare.classList.add('d-none');
+                sBtn.className = "flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-bold bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white";
+                cBtn.className = "flex-1 py-3 text-sm rounded-xl flex items-center justify-center gap-2 transition-all font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white";
+                sView.classList.remove('d-none');
+                cView.classList.add('d-none');
+                calculateSingleItem();
             }
-        };
+        }
 
-        // ==========================================
-        // โหมดคำนวณชิ้นเดียว (ไทยช่วยไทย)
-        // ==========================================
+        // ===== STEPPER CONTROLLER =====
+        function updatePcs(inputId, delta, mode) {
+            const input = document.getElementById(inputId);
+            const display = document.getElementById(inputId + '-display');
+            let val = parseInt(input.value) || 1;
+            val = Math.max(1, val + delta);
+            input.value = val;
+            display.textContent = val;
+            if (mode === 'compare') calculateCompare();
+            else calculateSingleItem();
+        }
+
+        // ===== COMPARE MODE LOGIC =====
+        const compInputs = ['price-1', 'qty-1', 'price-2', 'qty-2'].map(id => document.getElementById(id));
+        let lastCompareResult = null;
+
+        function calculateCompare() {
+            const p1 = parseFloat(document.getElementById('price-1').value);
+            const q1 = parseFloat(document.getElementById('qty-1').value);
+            const n1 = parseInt(document.getElementById('pcs-1').value) || 1;
+            const p2 = parseFloat(document.getElementById('price-2').value);
+            const q2 = parseFloat(document.getElementById('qty-2').value);
+            const n2 = parseInt(document.getElementById('pcs-2').value) || 1;
+
+            const resultArea = document.getElementById('result-area');
+            const winnerBox = document.getElementById('winner-box');
+            const tieBox = document.getElementById('tie-box');
+
+            resetCompareStyles();
+
+            if (!(p1 > 0 && q1 > 0 && p2 > 0 && q2 > 0)) {
+                resultArea.classList.add('d-none');
+                return;
+            }
+
+            const u1 = p1 / q1;
+            const u2 = p2 / q2;
+            const unit = unitSelect.value;
+
+            resultArea.classList.remove('d-none');
+
+            // จัดการกรณีคุ้มค่าเท่ากัน
+            if (Math.abs(u1 - u2) < 0.000001) {
+                winnerBox.classList.add('d-none');
+                tieBox.classList.remove('d-none');
+                lastCompareResult = null;
+                return;
+            }
+
+            const is1Better = u1 < u2;
+            const winner = is1Better ? 1 : 2;
+            const winPcs = is1Better ? n1 : n2;
+            const winPrice = is1Better ? p1 : p2;
+            const totalWinPrice = winPrice * winPcs;
+            const diff = Math.abs(u1 - u2);
+            const base = Math.max(u1, u2);
+            const diffPercent = (diff / base) * 100;
+
+            winnerBox.classList.remove('d-none');
+            tieBox.classList.add('d-none');
+
+            document.getElementById('winner-num').textContent = winner;
+            document.getElementById('diff-percent').textContent = pct(diffPercent);
+            document.getElementById('win-pcs').textContent = winPcs;
+            document.getElementById('comp-full-price').textContent = fmt(totalWinPrice);
+            document.getElementById('comp-copay-user').textContent = fmt(totalWinPrice * 0.4);
+            document.getElementById('comp-copay-gov').textContent = fmt(totalWinPrice * 0.6);
+
+            const bar = document.getElementById('diff-bar');
+            const barLabel = document.getElementById('diff-bar-label');
+            const clamped = Math.min(100, diffPercent * 1.8);
+            bar.style.width = clamped + '%';
+            barLabel.textContent = pct(diffPercent);
+
+            const winCard = document.getElementById('card-' + winner);
+            winCard.classList.remove('border-slate-200', 'dark:border-slate-700/80');
+            winCard.classList.add('border-emerald-400', 'ring-4', 'ring-emerald-50', 'dark:ring-emerald-950/40');
+            document.getElementById('badge-' + winner).classList.remove('d-none');
+
+            // บันทึกสถานะผลลัพธ์การคำนวณล่าสุดลง Object
+            lastCompareResult = {
+                winner: winner,
+                diffPercent: diffPercent,
+                winPcs: winPcs,
+                totalPrice: totalWinPrice,
+                userPay: totalWinPrice * 0.4,
+                govPay: totalWinPrice * 0.6,
+                p1: p1, q1: q1, p2: p2, q2: q2, n1: n1, n2: n2,
+                unit: unit, u1: u1, u2: u2
+            };
+        }
+
+        function resetCompareStyles() {
+            [1, 2].forEach(i => {
+                const card = document.getElementById('card-' + i);
+                card.className = "bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-700/80 transition-all duration-300 relative";
+                document.getElementById('badge-' + i).classList.add('d-none');
+            });
+        }
+
+        compInputs.forEach(el => el.addEventListener('input', calculateCompare));
+
+        // ===== SWAP DATA SYSTEM =====
+        function swapItems() {
+            const fields = ['price', 'qty', 'pcs'];
+            const vals = {};
+            fields.forEach(f => {
+                vals[f + '1'] = document.getElementById(f + '-1').value;
+                vals[f + '2'] = document.getElementById(f + '-2').value;
+            });
+            const d1 = document.getElementById('pcs-1-display').textContent;
+            const d2 = document.getElementById('pcs-2-display').textContent;
+
+            fields.forEach(f => {
+                document.getElementById(f + '-1').value = vals[f + '2'];
+                document.getElementById(f + '-2').value = vals[f + '1'];
+            });
+            document.getElementById('pcs-1-display').textContent = d2;
+            document.getElementById('pcs-2-display').textContent = d1;
+            document.getElementById('pcs-1').value = parseInt(d2) || 1;
+            document.getElementById('pcs-2').value = parseInt(d1) || 1;
+
+            calculateCompare();
+        }
+
+        // ===== CLEAR FIELDS =====
+        function clearCompareInputs() {
+            compInputs.forEach(el => el.value = '');
+            document.getElementById('pcs-1').value = 1;
+            document.getElementById('pcs-1-display').textContent = 1;
+            document.getElementById('pcs-2').value = 1;
+            document.getElementById('pcs-2-display').textContent = 1;
+            document.getElementById('result-area').classList.add('d-none');
+            resetCompareStyles();
+            lastCompareResult = null;
+            document.getElementById('price-1').focus();
+        }
+
+        // ===== COPY LOGIC =====
+        function copyCompareResult() {
+            if (!lastCompareResult) return;
+            const r = lastCompareResult;
+            const text =
+                `🏆 ชิ้นที่ ${r.winner} คุ้มที่สุด! ประหยัดไปได้ ${pct(r.diffPercent)}\n` +
+                `💰 ราคารวม ${r.winPcs} ชิ้น = ${fmt(r.totalPrice)}\n` +
+                `👤 เราจ่ายเอง (40%) = ${fmt(r.userPay)}\n` +
+                `🏛️ รัฐช่วยออก (60%) = ${fmt(r.govPay)}\n` +
+                `📊 เฉลยต่อหน่วย: ชิ้นที่ 1 = ${fmt(r.u1)}/${r.unit}, ชิ้นที่ 2 = ${fmt(r.u2)}/${r.unit}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ คัดลอกผลลัพธ์ลง คลิปบอร์ดแล้ว!');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('✅ คัดลอกผลลัพธ์สำเร็จ!');
+            });
+        }
+
+        // ===== LOCALSTORAGE HISTORY CONTROLLER =====
+        function saveCompareHistory() {
+            if (!lastCompareResult) {
+                showToast('⚠️ โปรดกรอกข้อมูลเพื่อเปรียบเทียบก่อนบันทึก');
+                return;
+            }
+            const r = lastCompareResult;
+            
+            // ปรับแก้โครงสร้าง Object เพื่อเก็บ Input ตัวแปรดิบสำหรับฟังก์ชัน Restore
+            const entry = {
+                id: Date.now(),
+                winner: r.winner,
+                diff: pct(r.diffPercent),
+                total: fmt(r.totalPrice),
+                user: fmt(r.userPay),
+                gov: fmt(r.govPay),
+                unit: r.unit,
+                timestamp: new Date().toLocaleTimeString('th-TH', {hour: '2-digit', minute:'2-digit'}),
+                rawInputs: {
+                    p1: r.p1, q1: r.q1, n1: r.n1,
+                    p2: r.p2, q2: r.q2, n2: r.n2,
+                    unit: r.unit
+                }
+            };
+            
+            let history = JSON.parse(localStorage.getItem('compareHistory') || '[]');
+            history.unshift(entry);
+            if (history.length > 20) history = history.slice(0, 20);
+            localStorage.setItem('compareHistory', JSON.stringify(history));
+            renderHistory();
+            showToast('💾 บันทึกประวัติการคำนวณเรียบร้อย!');
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const history = JSON.parse(localStorage.getItem('compareHistory') || '[]');
+            if (history.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-400 dark:text-slate-500 text-center py-4 bg-white dark:bg-slate-800/40 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">ยังไม่มีประวัติในระบบ</p>';
+                return;
+            }
+            // เพิ่ม class cursor-pointer และตกแต่งสไตล์ Hover เพื่อทำ UX ดึงประวัติกลับคืนมาใช้ซ้ำ
+            list.innerHTML = history.map((h) => `
+                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-3 flex items-center justify-between shadow-sm hover:translate-x-1 hover:border-emerald-400 dark:hover:border-emerald-600 transition-all duration-200 cursor-pointer group" onclick="restoreCompareInputs(${h.id})">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="text-xs font-black bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 px-2 py-0.5 rounded-lg flex-shrink-0 group-hover:bg-emerald-500 group-hover:text-white transition-colors">#${h.winner}</span>
+                        <div class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate">
+                            ถูกกว่า ${h.diff} · ยอดรวม ${h.total}
+                        </div>
+                    </div>
+                    <div class="text-[10px] font-medium text-slate-400 dark:text-slate-500 ml-2 flex-shrink-0">
+                        ${h.timestamp} น.
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ฟังก์ชันหัวใจสำคัญ: ทำการแมปค่าดิบจากประวัติกลับเข้าสู่อินพุตปัจจุบันและสั่งประมวลผลทันที
+        function restoreCompareInputs(id) {
+            const history = JSON.parse(localStorage.getItem('compareHistory') || '[]');
+            const record = history.find(item => item.id === id);
+            
+            if (!record || !record.rawInputs) return;
+            const data = record.rawInputs;
+
+            // คืนค่าให้กับ Select ของตัวเลือกหน่วยนับ
+            unitSelect.value = data.unit;
+            updateUnitLabels();
+
+            // คืนค่าและอัปเดตหน้า UI ฝั่งสินค้าชิ้นที่ 1
+            document.getElementById('price-1').value = data.p1;
+            document.getElementById('qty-1').value = data.q1;
+            document.getElementById('pcs-1').value = data.n1;
+            document.getElementById('pcs-1-display').textContent = data.n1;
+
+            // คืนค่าและอัปเดตหน้า UI ฝั่งสินค้าชิ้นที่ 2
+            document.getElementById('price-2').value = data.p2;
+            document.getElementById('qty-2').value = data.q2;
+            document.getElementById('pcs-2').value = data.n2;
+            document.getElementById('pcs-2-display').textContent = data.n2;
+
+            // สลับหน้าแท็บกลับมาที่โหมดเปรียบเทียบ และบังคับเรียกสั่งคํานวณใหม่ทันที
+            switchTab('compare');
+            showToast('📋 เรียกคืนประวัติอินพุตเดิมเรียบร้อยแล้ว!');
+        }
+
+        function clearHistory() {
+            if (confirm('ยืนยันล้างประวัติคำนวณทั้งหมดหรือไม่?')) {
+                localStorage.removeItem('compareHistory');
+                renderHistory();
+                showToast('🗑️ ล้างประวัติทั้งหมดเรียบร้อย');
+            }
+        }
+
+        // ===== SINGLE MODE LOGIC =====
         const singlePriceInput = document.getElementById('single-price');
-        
-        const calculateSingleItem = () => {
+
+        function calculateSingleItem() {
             const price = parseFloat(singlePriceInput.value);
             const pcs = parseInt(document.getElementById('single-pcs').value) || 1;
             const resultArea = document.getElementById('single-result-area');
 
             if (price > 0) {
-                const totalPrice = price * pcs; // เอาราคาคูณจำนวนชิ้น
-                document.getElementById('single-win-pcs').innerText = pcs;
-                document.getElementById('single-full-price').innerText = formatMoney(totalPrice);
-                document.getElementById('single-copay-user').innerText = formatMoney(totalPrice * 0.4); 
-                document.getElementById('single-copay-gov').innerText = formatMoney(totalPrice * 0.6);  
+                const total = price * pcs;
+                document.getElementById('single-win-pcs').textContent = pcs;
+                document.getElementById('single-full-price').textContent = fmt(total);
+                document.getElementById('single-copay-user').textContent = fmt(total * 0.4);
+                document.getElementById('single-copay-gov').textContent = fmt(total * 0.6);
                 resultArea.classList.remove('d-none');
             } else {
                 resultArea.classList.add('d-none');
             }
-        };
+        }
 
         singlePriceInput.addEventListener('input', calculateSingleItem);
 
-        const clearSingleInput = () => {
+        function clearSingleInput() {
             singlePriceInput.value = '';
             document.getElementById('single-pcs').value = 1;
-            document.getElementById('single-pcs-display').innerText = 1;
+            document.getElementById('single-pcs-display').textContent = 1;
             calculateSingleItem();
             singlePriceInput.focus();
-        };
+        }
 
-        // ==========================================
-        // โหมดเปรียบเทียบ
-        // ==========================================
-        const compInputs = ['price-1', 'qty-1', 'price-2', 'qty-2'].map(id => document.getElementById(id));
-        
-        const calculateCompare = () => {
-            const p1 = parseFloat(document.getElementById('price-1').value);
-            const q1 = parseFloat(document.getElementById('qty-1').value);
-            const n1 = parseInt(document.getElementById('pcs-1').value) || 1;
-            
-            const p2 = parseFloat(document.getElementById('price-2').value);
-            const q2 = parseFloat(document.getElementById('qty-2').value);
-            const n2 = parseInt(document.getElementById('pcs-2').value) || 1;
-
-            const isReady = p1 > 0 && q1 > 0 && p2 > 0 && q2 > 0;
-            resetCompareStyles();
-
-            if (!isReady) {
-                document.getElementById('result-area').classList.add('d-none');
+        function copySingleResult() {
+            const price = parseFloat(singlePriceInput.value);
+            const pcs = parseInt(document.getElementById('single-pcs').value) || 1;
+            if (!(price > 0)) {
+                showToast('⚠️ โปรดระบุราคาสินค้าก่อนทำการคัดลอก');
                 return;
             }
-
-            // คำนวณความคุ้มค่า (ราคาต่อปริมาตร) ไม่เอาจำนวนชิ้นมาคิดความคุ้ม เพราะของแพงขึ้นตามชิ้นอยู่แล้ว
-            const u1 = p1 / q1;
-            const u2 = p2 / q2;
-
-            let winner = 0, diffPercent = 0, totalWinPrice = 0, winPcs = 1;
-
-            if (u1 < u2) {
-                winner = 1; 
-                winPcs = n1;
-                totalWinPrice = p1 * n1; // ราคารวม = ราคาต่อชิ้น * จำนวนชิ้น
-                diffPercent = ((u2 - u1) / u2) * 100;
-            } else if (u2 < u1) {
-                winner = 2; 
-                winPcs = n2;
-                totalWinPrice = p2 * n2;
-                diffPercent = ((u1 - u2) / u1) * 100;
-            }
-
-            document.getElementById('result-area').classList.remove('d-none');
-
-            if (winner === 1 || winner === 2) {
-                document.getElementById('winner-box').classList.remove('d-none');
-                document.getElementById('tie-box').classList.add('d-none');
-                
-                document.getElementById('winner-num').innerText = winner;
-                document.getElementById('diff-percent').innerText = formatPercent(diffPercent);
-
-                // อัปเดตข้อมูลกล่อง 40/60
-                document.getElementById('win-pcs').innerText = winPcs;
-                document.getElementById('comp-full-price').innerText = formatMoney(totalWinPrice);
-                document.getElementById('comp-copay-user').innerText = formatMoney(totalWinPrice * 0.4);
-                document.getElementById('comp-copay-gov').innerText = formatMoney(totalWinPrice * 0.6);
-
-                // ไฮไลต์การ์ดที่ชนะ
-                const winCard = document.getElementById(`card-${winner}`);
-                winCard.classList.remove('border-transparent');
-                winCard.classList.add('border-emerald-400', 'ring-4', 'ring-emerald-50');
-                document.getElementById(`badge-${winner}`).classList.remove('d-none');
-
-            } else {
-                document.getElementById('winner-box').classList.add('d-none');
-                document.getElementById('tie-box').classList.remove('d-none');
-            }
-        };
-
-        const resetCompareStyles = () => {
-            [1, 2].forEach(num => {
-                const card = document.getElementById(`card-${num}`);
-                card.classList.remove('border-emerald-400', 'ring-4', 'ring-emerald-50');
-                card.classList.add('border-transparent');
-                document.getElementById(`badge-${num}`).classList.add('d-none');
+            const total = price * pcs;
+            const text =
+                `🧾 สินค้าราคาป้าย ${fmt(price)}/หน่วย × ทั้งหมด ${pcs} ชิ้น\n` +
+                `💰 ยอดรวมทั้งสิ้น = ${fmt(total)}\n` +
+                `👤 ส่วนที่จ่ายเอง (40%) = ${fmt(total * 0.4)}\n` +
+                `🏛️ ส่วนที่รัฐช่วย (60%) = ${fmt(total * 0.6)}`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ คัดลอกผลลัพธ์สำเร็จ!');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('✅ คัดลอกผลลัพธ์สำเร็จ!');
             });
-        };
+        }
 
-        compInputs.forEach(input => input.addEventListener('input', calculateCompare));
+        // ===== TOAST SYSTEM =====
+        let toastTimer = null;
+        function showToast(msg) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white dark:bg-white dark:text-slate-900 px-5 py-3 rounded-2xl shadow-lg text-xs font-bold z-50 transition-all duration-300 opacity-0 translate-y-4 pointer-events-none border border-slate-800 dark:border-slate-200';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 2200);
+        }
 
-        const clearCompareInputs = () => {
-            compInputs.forEach(input => input.value = '');
-            document.getElementById('pcs-1').value = 1;
-            document.getElementById('pcs-1-display').innerText = 1;
-            document.getElementById('pcs-2').value = 1;
-            document.getElementById('pcs-2-display').innerText = 1;
+        // ===== APPLICATION INIT =====
+        renderHistory();
+        setTimeout(() => {
             calculateCompare();
-            document.getElementById('price-1').focus();
-        };
+            calculateSingleItem();
+        }, 100);
     </script>
 </body>
 </html>
